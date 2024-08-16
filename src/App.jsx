@@ -1,63 +1,72 @@
 import { useState } from "react";
 import "./App.css";
-import CaseSection from "./section/CaseSection";
-import Paleta2 from "./components/Paleta2";
-import Paleta6 from "./components/Paleta6";
-import Paleta12 from "./components/Paleta12";
-import FillingSection from "./section/FillingSection";
-import PreviewSection from "./section/PreviewSection";
+import Fillings from "./section/Fillings";
+import CaseSize from "./section/CaseSize";
+import CaseColor from "./section/CaseColor";
+import Footer from "./components/Footer";
+import Review from "./section/Review";
+import Introduction from "./section/Introduction";
 
 function App() {
-  const [stage, setStage] = useState("case"); // Initial stage
+  const steps = ["intro", "size", "color", "fillings", "review"];
+  const stepTitles = {
+    size: [1, "Choose a case size"],
+    color: [2, "Choose a case color"],
+    fillings: [3, "Choose your fillings"],
+    review: [4, "Review"],
+  };
 
-  const [totalPrice, setTotalPrice] = useState(0);
-
+  const [stage, setStage] = useState(steps[0]);
   const [selectedCase, setSelectedCase] = useState({
-    slots: null,
-    color: null,
-    price: totalPrice,
+    size: null,
+    color: { name: "", image: null },
+    price: null,
     fillings: [],
+    extension: { name: "", image: null, price: null },
+    images: [],
   });
 
+  const stepTitle = stepTitles[stage] || [0, ""];
+
   return (
-    <main className="flex gap-16 px-24 py-12">
-      <div className="w-1/2 flex justify-center mt-12">
-        {selectedCase.slots === 2 && selectedCase.color && (
-          <Paleta2 selectedCase={selectedCase} />
-        )}
-
-        {selectedCase.slots === 6 && selectedCase.color && (
-          <Paleta6 selectedCase={selectedCase} />
-        )}
-
-        {selectedCase.slots === 12 && selectedCase.color && (
-          <Paleta12 selectedCase={selectedCase} />
-        )}
-      </div>
-
-      <div className="w-1/2">
-        {stage === "review" && (
-          <PreviewSection setStage={setStage} selectedCase={selectedCase} />
-        )}
-
-        {stage === "case" && (
-          <CaseSection
-            setTotalPrice={setTotalPrice}
+    <main className="relative flex flex-col h-screen">
+      {stage === "intro" ? (
+        <Introduction setStage={setStage} />
+      ) : (
+        <>
+          <div className="flex items-end mt-16 w-full font-bold xl:px-24 md:px-12 px-6">
+            <h2 className="text-lg">{"0" + stepTitle[0] + "."}</h2>
+            <h2 className="ml-4 text-2xl">{stepTitle[1]}</h2>
+          </div>
+          <div className="w-full">
+            {stage === "size" && (
+              <CaseSize
+                selectedCase={selectedCase}
+                setSelectedCase={setSelectedCase}
+              />
+            )}
+            {stage === "color" && (
+              <CaseColor
+                selectedCase={selectedCase}
+                setSelectedCase={setSelectedCase}
+              />
+            )}
+            {stage === "fillings" && (
+              <Fillings
+                selectedCase={selectedCase}
+                setSelectedCase={setSelectedCase}
+              />
+            )}
+            {stage === "review" && <Review selectedCase={selectedCase} />}
+          </div>
+          <Footer
             setStage={setStage}
             selectedCase={selectedCase}
-            setSelectedCase={setSelectedCase}
+            steps={steps}
+            stage={stage}
           />
-        )}
-
-        {stage === "fillings" && (
-          <FillingSection
-            setTotalPrice={setTotalPrice}
-            setStage={setStage}
-            selectedCase={selectedCase}
-            setSelectedCase={setSelectedCase}
-          />
-        )}
-      </div>
+        </>
+      )}
     </main>
   );
 }

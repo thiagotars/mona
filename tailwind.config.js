@@ -2,22 +2,23 @@
 export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
-    extend: {
-      colors: {
-        "cor-gry": "#eeee",
-        "cor-blk": "#000000",
-        "cor-ylw": "#e6c235",
-        "cor-blu": "#325cd9",
-        "cor-wht": "#ffffff",
-        "cor-prp": "#944dd7",
-        "cor-brw": "#502121",
-        "cor-pnk": "#e438bc",
-        "cor-rss": "#651515",
-        "cor-trq": "#1c8ddd",
-        "cor-grn": "#2d4722",
-        "cor-gar": "#760e0c",
-        "cor-uru": "#910805",
-      },
+    extend: {},
+    screens: {
+      xs: "480px",
+      sm: "640px",
+      // => @media (min-width: 640px) { ... }
+
+      md: "768px",
+      // => @media (min-width: 768px) { ... }
+
+      lg: "1024px",
+      // => @media (min-width: 1024px) { ... }
+
+      xl: "1280px",
+      // => @media (min-width: 1280px) { ... }
+
+      "2xl": "1536px",
+      // => @media (min-width: 1536px) { ... }
     },
   },
   plugins: [],
