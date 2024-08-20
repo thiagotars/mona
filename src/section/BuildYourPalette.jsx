@@ -107,7 +107,7 @@ const BuildYourPalette = () => {
       case 2:
         return <Fillings fillings={fillings} />;
       case 3:
-        return <Review />;
+        return <Review fillings={fillings} extensions={extensions} />;
       default:
         return <CaseSize />;
     }

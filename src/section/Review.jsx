@@ -1,13 +1,63 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { CaseContext } from "../CaseContext";
 import FillingCounter from "../components/FillingCounter";
-import fillings from "../assets/fillings.png";
-import extensionImage from "../assets/extension.png";
 import { urlFor } from "../utils/urlFor";
 
-const PreviewSelection = () => {
+const PreviewSelection = ({ fillings, extensions }) => {
   const { selectedCase } = useContext(CaseContext);
   const [isFillingsShowing, setIsFillingsShowing] = useState(true);
+  const [imagesLoaded, setImagesLoaded] = useState({
+    caseImage: false,
+    extensionImage: !selectedCase.extension,
+    fillingImage: false,
+  });
+
+  useEffect(() => {
+    // Function to check if all images are loaded
+    const checkImagesLoaded = () => {
+      const totalImages =
+        2 + (selectedCase.extension ? 1 : 0) + (fillings.length > 0 ? 1 : 0);
+      const loadedImages = Object.values(imagesLoaded).filter(Boolean).length;
+
+      if (loadedImages === totalImages) {
+        setImagesLoaded((prevState) => ({
+          ...prevState,
+          allImagesLoaded: true,
+        }));
+      }
+    };
+
+    // Load case image
+    const caseImg = new Image();
+    caseImg.src = urlFor(selectedCase.images[1]).toString();
+    caseImg.onload = () => {
+      setImagesLoaded((prevState) => ({ ...prevState, caseImage: true }));
+      checkImagesLoaded();
+    };
+
+    // Load extension image if applicable
+    if (selectedCase.extension) {
+      const extImg = new Image();
+      extImg.src = urlFor(extensions[0].image).toString();
+      extImg.onload = () => {
+        setImagesLoaded((prevState) => ({
+          ...prevState,
+          extensionImage: true,
+        }));
+        checkImagesLoaded();
+      };
+    }
+
+    // Load filling image if applicable
+    if (fillings.length > 0) {
+      const fillImg = new Image();
+      fillImg.src = urlFor(fillings[0].image).toString();
+      fillImg.onload = () => {
+        setImagesLoaded((prevState) => ({ ...prevState, fillingImage: true }));
+        checkImagesLoaded();
+      };
+    }
+  }, [selectedCase, extensions, fillings]);
 
   const calculateFillings = () => {
     const totalPrice = selectedCase.fillings.reduce(
@@ -23,14 +73,20 @@ const PreviewSelection = () => {
       <div className="flex flex-col w-full md:w-1/2 px-0 lg:px-12 gap-4">
         <div className="flex w-full justify-center">
           <div className="flex border w-full h-28 rounded-lg">
-            <div
-              className="w-28 rounded-lg"
-              style={{
-                backgroundImage: `url(${urlFor(selectedCase.images[1])})`,
-                backgroundPosition: "center",
-                backgroundSize: "cover",
-              }}
-            ></div>
+            {!imagesLoaded.caseImage ? (
+              <div className="w-28 rounded-lg bg-gray-200 flex items-center justify-center">
+                <p>Loading...</p>
+              </div>
+            ) : (
+              <div
+                className="w-28 rounded-lg"
+                style={{
+                  backgroundImage: `url(${urlFor(selectedCase.images[1])})`,
+                  backgroundPosition: "center",
+                  backgroundSize: "cover",
+                }}
+              ></div>
+            )}
             <div className="flex flex-col text-sm justify-center ml-4 py-2 gap-1">
               <h3 className="text-[16px]">{`Palette ${selectedCase.size}`}</h3>
               <div className="flex mt-2">
@@ -58,14 +114,20 @@ const PreviewSelection = () => {
 
         {selectedCase.extension && (
           <div className="flex border rounded-lg h-28">
-            <div
-              className="min-w-28 rounded-lg"
-              style={{
-                backgroundImage: `url(${extensionImage})`,
-                backgroundPosition: "center",
-                backgroundSize: "cover",
-              }}
-            ></div>
+            {!imagesLoaded.extensionImage ? (
+              <div className="min-w-28 rounded-lg bg-gray-200 flex items-center justify-center">
+                <p>Loading...</p>
+              </div>
+            ) : (
+              <div
+                className="min-w-28 rounded-lg"
+                style={{
+                  backgroundImage: `url(${urlFor(extensions[0].image)})`,
+                  backgroundPosition: "center",
+                  backgroundSize: "cover",
+                }}
+              ></div>
+            )}
             <div className="flex flex-col text-sm justify-center ml-4 py-2 gap-1">
               <h3 className="text-[16px]">Extension</h3>
               <div className="flex mt-2">
@@ -90,14 +152,20 @@ const PreviewSelection = () => {
         {selectedCase.fillings.length > 0 && (
           <div className="flex w-full justify-center">
             <div className="flex border w-full h-28 rounded-lg">
-              <div
-                className="min-w-28 rounded-lg"
-                style={{
-                  backgroundImage: `url(${fillings})`,
-                  backgroundPosition: "center",
-                  backgroundSize: "cover",
-                }}
-              ></div>
+              {!imagesLoaded.fillingImage ? (
+                <div className="min-w-28 rounded-lg bg-gray-200 flex items-center justify-center">
+                  <p>Loading...</p>
+                </div>
+              ) : (
+                <div
+                  className="min-w-28 rounded-lg"
+                  style={{
+                    backgroundImage: `url(${urlFor(fillings[0].image)})`,
+                    backgroundPosition: "center",
+                    backgroundSize: "cover",
+                  }}
+                ></div>
+              )}
               <div className="w-full flex flex-col text-sm justify-center ml-4 py-2 pr-6 gap-1">
                 <div className="flex justify-between">
                   <h3 className="text-[16px]">Fillings</h3>
