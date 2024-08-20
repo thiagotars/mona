@@ -1,9 +1,12 @@
+import { useContext, useState } from "react";
+import { CaseContext } from "../CaseContext";
 import FillingCounter from "../components/FillingCounter";
 import fillings from "../assets/fillings.png";
 import extensionImage from "../assets/extension.png";
-import { useState } from "react";
+import { urlFor } from "../utils/urlFor";
 
-const PreviewSelection = ({ selectedCase }) => {
+const PreviewSelection = () => {
+  const { selectedCase } = useContext(CaseContext);
   const [isFillingsShowing, setIsFillingsShowing] = useState(true);
 
   const calculateFillings = () => {
@@ -13,22 +16,23 @@ const PreviewSelection = ({ selectedCase }) => {
     );
     return totalPrice;
   };
-  console.log(selectedCase);
+
   return (
     <div className="flex flex-col md:flex-row w-full mt-16 px-4 sm:px-12 xl:px-24">
+      {/* Case details */}
       <div className="flex flex-col w-full md:w-1/2 px-0 lg:px-12 gap-4">
         <div className="flex w-full justify-center">
           <div className="flex border w-full h-28 rounded-lg">
             <div
-              className=" w-28 rounded-lg"
+              className="w-28 rounded-lg"
               style={{
-                backgroundImage: `url(${selectedCase.images[1]})`,
+                backgroundImage: `url(${urlFor(selectedCase.images[1])})`,
                 backgroundPosition: "center",
                 backgroundSize: "cover",
               }}
             ></div>
             <div className="flex flex-col text-sm justify-center ml-4 py-2 gap-1">
-              <h3 className="text-[16px]">{`Pallete ${selectedCase.size}`}</h3>
+              <h3 className="text-[16px]">{`Palette ${selectedCase.size}`}</h3>
               <div className="flex mt-2">
                 <p>Color:</p>
                 <p className="ml-2">{selectedCase.color.name}</p>
@@ -51,8 +55,9 @@ const PreviewSelection = ({ selectedCase }) => {
             </div>
           </div>
         </div>
+
         {selectedCase.extension && (
-          <div className="flex border rounded-lg">
+          <div className="flex border rounded-lg h-28">
             <div
               className="min-w-28 rounded-lg"
               style={{
@@ -79,6 +84,8 @@ const PreviewSelection = ({ selectedCase }) => {
           </div>
         )}
       </div>
+
+      {/* Fillings details */}
       <div className="pl-0 md:pl-6 w-full mt-4 md:mt-0 md:w-1/2">
         {selectedCase.fillings.length > 0 && (
           <div className="flex w-full justify-center">
@@ -96,7 +103,7 @@ const PreviewSelection = ({ selectedCase }) => {
                   <h3 className="text-[16px]">Fillings</h3>
                   <button onClick={() => setIsFillingsShowing((prev) => !prev)}>
                     <p className="underline text-pink-500">
-                      {isFillingsShowing ? "hide" : "show"}
+                      {isFillingsShowing ? "Hide" : "Show"}
                     </p>
                   </button>
                 </div>
@@ -113,18 +120,10 @@ const PreviewSelection = ({ selectedCase }) => {
                   </p>
                 </div>
               </div>
-              {/* <div
-                className="w-28 rounded-lg"
-                style={{
-                  backgroundImage: `url(${fillings})`,
-                  backgroundPosition: "center",
-                  backgroundSize: "cover",
-                }}
-              ></div> */}
             </div>
           </div>
         )}
-        {/* <h3 className="text-lg font-bold">Filling colors:</h3> */}
+
         {isFillingsShowing && <FillingCounter data={selectedCase} />}
       </div>
     </div>

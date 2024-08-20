@@ -1,12 +1,15 @@
 import { useState } from "react";
+import { urlFor } from "../utils/urlFor"; // Adjust the import path accordingly
 
 const Filling = ({ filling, removeItem }) => {
   const [isHovered, setIsHovered] = useState(false);
 
+  const imageUrl = urlFor(filling.image);
+
   return (
     <div
       style={{
-        backgroundImage: `url(${filling.image})`,
+        backgroundImage: imageUrl ? `url(${imageUrl})` : "none",
         backgroundPosition: "center",
         backgroundSize: "cover",
       }}
@@ -15,13 +18,13 @@ const Filling = ({ filling, removeItem }) => {
       className="z-30 rounded-md relative"
     >
       {isHovered && (
-        <div className="flex justify-center items-center">
-          <div className="flex justify-center items-center bg-black px-1 py-1 rounded-lg mt-6">
+        <div className="flex flex-col h-full gap-3 justify-center items-center">
+          <div className="flex  bg-black px-2 py-1 rounded-lg">
             <p className="text-sm text-white">{filling.name}</p>
           </div>
           <button
             onClick={() => removeItem(filling)}
-            className="absolute flex items-center justify-center m-auto left-0 right-0 bottom-0 mb-2 w-8 h-8 rounded-full bg-black text-white"
+            className="flex items-center justify-center w-8 h-8 rounded-full bg-black text-white"
           >
             <span className="material-symbols-rounded">close</span>
           </button>

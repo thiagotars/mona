@@ -1,7 +1,13 @@
-import { colors } from "../data";
+import { useContext } from "react";
+import { CaseContext } from "../CaseContext";
 import Palette from "../components/Palette";
+import { urlFor } from "../utils/urlFor";
+import { v4 as uuidv4 } from "uuid";
 
-const FillingSection = ({ selectedCase, setSelectedCase }) => {
+const FillingSection = ({ fillings }) => {
+  const { selectedCase, setSelectedCase } = useContext(CaseContext);
+  const fillingColors = fillings[0].colors;
+
   return (
     <div className="flex flex-col md:flex-row w-full mt-16 px-4 sm:px-12 xl:px-24">
       <div className="w-full lg:w-1/2 flex justify-center">
@@ -13,31 +19,31 @@ const FillingSection = ({ selectedCase, setSelectedCase }) => {
 
       <div className="flex flex-col w-full lg:w-1/2 md:pl-6 mt-12 md:mt-0 max-h-[480px] overflow-scroll">
         <div className="flex justify-center md:justify-start flex-wrap gap-4">
-          {colors.map((color) => {
-            return (
-              <div key={color.id} className={`flex flex-col items-center`}>
-                <button className="rounded-lg pb-1">
-                  <div
-                    className="flex gap-2 items-center justify-between  w-[80px] h-[120px]  rounded-lg"
-                    style={{
-                      backgroundImage: `url(${color.image})`,
-                      backgroundPosition: "center",
-                      backgroundSize: "cover",
-                    }}
-                    onClick={() => {
-                      if (selectedCase.fillings.length < selectedCase.size) {
-                        setSelectedCase({
-                          ...selectedCase,
-                          fillings: [...selectedCase.fillings, color],
-                        });
-                      } else return;
-                    }}
-                  ></div>
-                  <p className="text-sm mt-1">{color.name}</p>
-                </button>
-              </div>
-            );
-          })}
+          {fillingColors.map((filling) => (
+            <div key={filling._id} className="flex flex-col items-center">
+              <button className="rounded-lg pb-1">
+                <div
+                  className="flex gap-2 items-center justify-between w-[80px] h-[120px] rounded-lg"
+                  style={{
+                    backgroundImage: `url(${urlFor(filling.image)})`,
+                    backgroundPosition: "center",
+                    backgroundSize: "cover",
+                  }}
+                  onClick={() => {
+                    if (selectedCase.fillings.length < selectedCase.size) {
+                      let newFilling = { ...filling, _id: uuidv4() };
+
+                      setSelectedCase({
+                        ...selectedCase,
+                        fillings: [...selectedCase.fillings, newFilling],
+                      });
+                    }
+                  }}
+                ></div>
+                <p className="text-sm mt-1">{filling.name}</p>
+              </button>
+            </div>
+          ))}
         </div>
       </div>
     </div>

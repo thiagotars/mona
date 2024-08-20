@@ -1,12 +1,32 @@
-import React from "react";
-import paleta201 from "../assets/paleta201.png";
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import client from "../../Backend_sanity/sanityClient";
+import { urlFor } from "../utils/urlFor";
 
-const Introduction = ({ setStage }) => {
+const Introduction = () => {
+  const [introData, setIntroData] = useState(null);
+
+  useEffect(() => {
+    client
+      .fetch(
+        `*[_type == "intro"][0]{
+          image,
+          text
+        }`
+      )
+      .then((data) => setIntroData(data))
+      .catch((error) => console.error(error));
+  }, []);
+
+  if (!introData) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <section className="flex flex-col sm:flex-row h-screen w-full">
       <div className="w-full sm:w-1/2 h-full">
         <img
-          src={paleta201}
+          src={urlFor(introData.image)}
           alt="Palette"
           className="object-cover w-full h-full"
         />
@@ -17,21 +37,16 @@ const Introduction = ({ setStage }) => {
             Build Your Palette
           </h1>
           <div>
-            <p className="max-w-96 mt-2 sm:text-[1.125em]">
-              Create a palette that's uniquely yours.
-            </p>
-            <p className="max-w-[22rem] mt-6 text-gray-500 sm:text-lg text-sm">
-              Choose the perfect palette size, select your favorite color, and
-              fill it with the shades that define your style.
+            <p className="max-w-[22rem] mt-6 text-gray-500 sm:text-md text-sm">
+              {introData.text}
             </p>
           </div>
         </div>
-        <button
-          onClick={() => setStage("size")}
-          className="mt-10 py-3 px-8 w-[200px] bg-gray-100 rounded-full hover:text-white hover:bg-black transition duration-300"
-        >
-          Start Building
-        </button>
+        <Link to="build-your-palette">
+          <button className="mt-10 py-3 px-8 w-[200px] bg-gray-100 rounded-full hover:text-white hover:bg-black transition duration-300">
+            Start Building
+          </button>
+        </Link>
       </div>
     </section>
   );

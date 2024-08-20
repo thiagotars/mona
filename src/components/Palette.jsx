@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import Filling from "./Filling";
 import pin from "../assets/pin.png";
+import { useContext } from "react";
+import { CaseContext } from "../CaseContext";
 
-const Palette = ({ selectedCase, setSelectedCase }) => {
-  console.log(selectedCase);
+const Palette = () => {
+  const { selectedCase, setSelectedCase } = useContext(CaseContext);
   const [currentPalleteView, setCurrentPalleteView] = useState(
     selectedCase.size === 12 ? "middle" : "bottom"
   );
@@ -23,20 +25,17 @@ const Palette = ({ selectedCase, setSelectedCase }) => {
   }, []);
 
   const removeItem = (itemToRemove) => {
-    console.log(itemToRemove);
+    console.log("Removing Item:", itemToRemove);
     const indexToRemove = selectedCase.fillings.findIndex(
-      (item) => item.id === itemToRemove.id
+      (item) => item._id === itemToRemove._id
     );
     if (indexToRemove !== -1) {
-      console.log(indexToRemove);
       const updatedFillingList = [
         ...selectedCase.fillings.slice(0, indexToRemove),
         ...selectedCase.fillings.slice(indexToRemove + 1),
       ];
-      console.log(updatedFillingList);
       setSelectedCase({ ...selectedCase, fillings: updatedFillingList });
     }
-    console.log(selectedCase);
   };
 
   let palleteStructure;
@@ -67,7 +66,7 @@ const Palette = ({ selectedCase, setSelectedCase }) => {
     container: {
       backgroundImage:
         currentPalleteView === "top" || currentPalleteView === "bottom"
-          ? `url(${selectedCase.color.image})`
+          ? `url(${selectedCase.color?.image})`
           : selectedCase.extension?.image
           ? `url(${selectedCase.extension.image})`
           : "",
@@ -86,11 +85,10 @@ const Palette = ({ selectedCase, setSelectedCase }) => {
 
   return (
     <div className="relative flex flex-col items-center">
-      <div // Current container based on currentIndex
+      <div
         id="container"
         style={palleteStyles.container}
-        // w-[248px] h-[296px]
-        className={`p-10 sm:p-12 rounded-2xl`}
+        className="p-10 sm:p-12 rounded-2xl"
       >
         <div
           className="absolute top-2 mx-auto inset-0 w-11 h-11 z-30"
@@ -107,16 +105,15 @@ const Palette = ({ selectedCase, setSelectedCase }) => {
           >
             {palleteStructure.map((view) => {
               if (view.name.toLowerCase() === currentPalleteView) {
-                return view.fillings.map((filling, index) => {
-                  return (
-                    <Filling
-                      key={index}
-                      filling={filling}
-                      removeItem={removeItem}
-                    />
-                  );
-                });
+                return view.fillings.map((filling, index) => (
+                  <Filling
+                    key={index}
+                    filling={filling}
+                    removeItem={removeItem}
+                  />
+                ));
               }
+              return null;
             })}
           </div>
         )}

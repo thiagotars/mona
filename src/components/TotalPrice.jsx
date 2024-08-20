@@ -1,5 +1,9 @@
-const TotalPrice = ({ selectedCase }) => {
-  console.log(selectedCase);
+import { useContext } from "react";
+import { CaseContext } from "../CaseContext";
+
+const TotalPrice = () => {
+  const { selectedCase, setSelectedCase } = useContext(CaseContext);
+
   const calculateFillings = () => {
     const totalPrice = selectedCase.fillings.reduce(
       (accumulator, current) => accumulator + current.price,
