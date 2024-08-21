@@ -115,11 +115,11 @@ const BuildYourPalette = () => {
 
   return (
     <div className="relative flex flex-col h-screen">
-      <div className="flex items-end mt-16 w-full font-bold xl:px-24 md:px-12 px-6">
+      <div className="flex items-end my-12 sm:my-16 w-full font-bold xl:px-24 md:px-12 px-6">
         <h2 className="text-lg">{currentStep + 1}.</h2>
         <h2 className="ml-4 text-2xl">{getStepTitle()}</h2>
       </div>
-      <div className="w-full">{renderStepComponent()}</div>
+      {renderStepComponent()}
       <Footer />
     </div>
   );

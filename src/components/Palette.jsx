@@ -3,14 +3,15 @@ import Filling from "./Filling";
 import pin from "../assets/pin.png";
 import { useContext } from "react";
 import { CaseContext } from "../CaseContext";
+import LoadingSkeleton from "./LoadingSkeleton"; // Import the LoadingSkeleton component
 
 const Palette = () => {
   const { selectedCase, setSelectedCase } = useContext(CaseContext);
   const [currentPalleteView, setCurrentPalleteView] = useState(
     selectedCase.size === 12 ? "middle" : "bottom"
   );
-
   const [isMobile, setIsMobile] = useState(false);
+  const [loading, setLoading] = useState(true); // Add loading state
 
   useEffect(() => {
     const handleResize = () => {
@@ -18,14 +19,20 @@ const Palette = () => {
     };
 
     handleResize();
-
     window.addEventListener("resize", handleResize);
 
-    return () => window.removeEventListener("resize", handleResize);
+    // Simulate data loading with a timeout
+    const loadData = setTimeout(() => {
+      setLoading(false); // Set loading to false once data is "loaded"
+    }, 2000);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      clearTimeout(loadData); // Cleanup timeout on component unmount
+    };
   }, []);
 
   const removeItem = (itemToRemove) => {
-    console.log("Removing Item:", itemToRemove);
     const indexToRemove = selectedCase.fillings.findIndex(
       (item) => item._id === itemToRemove._id
     );
@@ -83,6 +90,19 @@ const Palette = () => {
     },
   };
 
+  // Render LoadingSkeleton if data is still loading
+  if (loading) {
+    return (
+      <div className="relative flex flex-col items-center">
+        <LoadingSkeleton width="400px" height="400px" borderRadius="2rem" />
+        <div className="mt-4">
+          <LoadingSkeleton width="100px" height="20px" borderRadius="9999px" />
+        </div>
+      </div>
+    );
+  }
+
+  // Render the Palette component when data is loaded
   return (
     <div className="relative flex flex-col items-center">
       <div

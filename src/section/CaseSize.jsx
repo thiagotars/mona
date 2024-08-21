@@ -1,6 +1,7 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { CaseContext } from "../CaseContext";
 import { urlFor } from "../utils/urlFor";
+import LoadingSkeleton from "../components/LoadingSkeleton"; // Import the LoadingSkeleton component
 
 const CaseSize = ({ cases, extensions, imagesLoaded }) => {
   const { selectedCase, setSelectedCase } = useContext(CaseContext);
@@ -46,14 +47,24 @@ const CaseSize = ({ cases, extensions, imagesLoaded }) => {
 
   if (!imagesLoaded) {
     return (
-      <div className="w-full flex justify-center items-center h-[480px]">
-        <p>Loading...</p>
-      </div>
+      <section className="w-full h-full flex flex-wrap gap-6 justify-center xl:px-24 md:px-12 px-6 md:max-h-[480px] overflow-scroll">
+        {/* Map through a dummy array to render loading skeletons */}
+        {[...Array(cases.length)].map((_, index) => (
+          <div key={index} className="border rounded-lg w-[320px] h-[320px]">
+            <LoadingSkeleton
+              width="100%"
+              height="380px"
+              imageHeight="320px"
+              textHeight="24px"
+            />
+          </div>
+        ))}
+      </section>
     );
   }
 
   return (
-    <section className="w-full flex flex-wrap mt-16 gap-6 justify-center items-center xl:px-24 md:px-12 px-6 md:max-h-[480px] overflow-scroll">
+    <section className="w-full flex flex-wrap gap-6 justify-center items-center xl:px-24 md:px-12 px-6 md:max-h-[480px] overflow-scroll">
       {cases.map((caseItem, index) => (
         <div
           key={caseItem._id}

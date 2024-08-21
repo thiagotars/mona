@@ -68,7 +68,7 @@ const PreviewSelection = ({ fillings, extensions }) => {
   };
 
   return (
-    <div className="flex flex-col md:flex-row w-full mt-16 px-4 sm:px-12 xl:px-24">
+    <div className="flex flex-col md:flex-row w-full px-4 sm:px-12 xl:px-24">
       {/* Case details */}
       <div className="flex flex-col w-full md:w-1/2 px-0 lg:px-12 gap-4">
         <div className="flex w-full justify-center">

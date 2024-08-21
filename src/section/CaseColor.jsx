@@ -1,21 +1,32 @@
-import { useContext } from "react";
+import { useContext, useState, useEffect } from "react";
 import Palette from "../components/Palette.jsx";
 import { CaseContext } from "../CaseContext";
 import { urlFor } from "../utils/urlFor.js";
+import LoadingSkeleton from "../components/LoadingSkeleton.jsx";
 
 const CaseColor = ({ cases, extensions }) => {
   const { selectedCase, setSelectedCase } = useContext(CaseContext);
+  const [loadingColors, setLoadingColors] = useState(true);
+  const [loadingExtensions, setLoadingExtensions] = useState(true);
+
+  useEffect(() => {
+    if (cases.length > 0) {
+      setLoadingColors(false); // Set loading to false when color data is ready
+    }
+    if (extensions.length > 0) {
+      setLoadingExtensions(false); // Set loading to false when extension data is ready
+    }
+  }, [cases, extensions]);
 
   const filteredCase = cases.filter(
     (caseItem) => selectedCase.size === caseItem.size
   );
 
-  // Add defensive checks
   const caseColors =
     filteredCase.length > 0 ? filteredCase[0].colors || [] : [];
 
   return (
-    <section className="flex flex-col md:flex-row w-full mt-16 px-6 sm:px-12 xl:px-24">
+    <section className="flex flex-col md:flex-row w-full px-6 sm:px-12 xl:px-24">
       <div className="w-full lg:w-1/2 flex justify-center">
         <Palette />
       </div>
@@ -24,48 +35,62 @@ const CaseColor = ({ cases, extensions }) => {
           {caseColors.length > 0 && (
             <h2 className="text-lg font-bold">Main color</h2>
           )}
-          <div className="flex flex-wrap gap-4 mt-3">
-            {caseColors.map((color, index) => (
-              <div
-                key={index}
-                className={`${
-                  selectedCase.color?.image === urlFor(color.image)
-                    ? `border-pink-500`
-                    : ""
-                } flex flex-col items-center border rounded-lg cursor-pointer`}
-                onClick={() =>
-                  setSelectedCase({
-                    ...selectedCase,
-                    color: {
-                      name: color.color,
-                      image: urlFor(color.image),
-                    },
-                  })
-                }
-              >
+          {loadingColors ? (
+            <LoadingSkeleton
+              width="100%"
+              height="136px"
+              imageHeight="96px"
+              textHeight="16px"
+            />
+          ) : (
+            <div className="flex flex-wrap gap-4 mt-3">
+              {caseColors.map((color, index) => (
                 <div
-                  style={{
-                    backgroundImage: `url(${urlFor(color.image)})`,
-                    backgroundPosition: "center",
-                    backgroundSize: "cover",
-                  }}
-                  className="w-24 h-24 rounded-lg bg-gray-200"
-                ></div>
-                <p className="py-2 text-[.875em]">{color.color}</p>
-              </div>
-            ))}
-          </div>
+                  key={index}
+                  className={`${
+                    selectedCase.color?.image === urlFor(color.image)
+                      ? `border-pink-500`
+                      : ""
+                  } flex flex-col items-center border rounded-lg cursor-pointer`}
+                  onClick={() =>
+                    setSelectedCase({
+                      ...selectedCase,
+                      color: {
+                        name: color.color,
+                        image: urlFor(color.image),
+                      },
+                    })
+                  }
+                >
+                  <div
+                    style={{
+                      backgroundImage: `url(${urlFor(color.image)})`,
+                      backgroundPosition: "center",
+                      backgroundSize: "cover",
+                    }}
+                    className="w-24 h-24 rounded-lg bg-gray-200"
+                  ></div>
+                  <p className="py-2 text-[.875em]">{color.color}</p>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
         {selectedCase.extension && (
           <div className="flex flex-col">
             {extensions.length > 0 && (
               <h2 className="mt-12 text-lg font-bold">Extension color</h2>
             )}
-
-            <div className="flex flex-wrap gap-4 mt-3">
-              {extensions[0].colors.map((extension, index) => {
-                console.log(extension, extensions);
-                return (
+            {loadingExtensions ? (
+              <LoadingSkeleton
+                width="100%"
+                height="136px"
+                imageHeight="96px"
+                textHeight="16px"
+              />
+            ) : (
+              <div className="flex flex-wrap gap-4 mt-3">
+                {extensions[0].colors.map((extension, index) => (
                   <div
                     key={index}
                     className={`${
@@ -94,9 +119,9 @@ const CaseColor = ({ cases, extensions }) => {
                     ></div>
                     <p className="py-2 text-[.875em]">{extension.color}</p>
                   </div>
-                );
-              })}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
       </div>

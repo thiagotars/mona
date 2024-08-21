@@ -5,3 +5,7 @@
 :root {
   font-family: Poppins, Helvetica, Arial, sans-serif;
 }
+
+main {
+  box-sizing: border-box;
+}
