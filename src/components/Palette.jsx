@@ -91,16 +91,16 @@ const Palette = () => {
   };
 
   // Render LoadingSkeleton if data is still loading
-  if (loading) {
-    return (
-      <div className="relative flex flex-col items-center">
-        <LoadingSkeleton width="400px" height="400px" borderRadius="2rem" />
-        <div className="mt-4">
-          <LoadingSkeleton width="100px" height="20px" borderRadius="9999px" />
-        </div>
-      </div>
-    );
-  }
+  // if (loading) {
+  //   return (
+  //     <div className="relative flex flex-col items-center">
+  //       <LoadingSkeleton width="400px" height="400px" borderRadius="2rem" />
+  //       <div className="mt-4">
+  //         <LoadingSkeleton width="100px" height="20px" borderRadius="9999px" />
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   // Render the Palette component when data is loaded
   return (
